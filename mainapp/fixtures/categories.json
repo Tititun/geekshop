@@ -1,0 +1,1 @@
+[{"model": "mainapp.product_category", "pk": 1, "fields": {"name": "Стулья", "description": "Стулья высшего качества"}}, {"model": "mainapp.product_category", "pk": 2, "fields": {"name": "Аксессуары", "description": "Дизайнерские аксессуары."}}]
