@@ -15,9 +15,14 @@
 				<a href="{% url 'main' %}" class="logo"></a>
                 <div class="time">{% now "d.m.Y" %}</div>
 				<ul class="menu">
-					<li><a href="{% url 'main' %}" class="active">домой</a></li>
-					<li><a href="{% url 'mainapp:products' %}">продукты</a></li>
-					<li><a href="">контакты</a></li>
+                    <li><a href="{% url 'main' %}" class="active">домой</a></li>
+                    <li><a href="{% url 'mainapp:products' %}" class="active">каталог</a></li>
+                    <li><a href="">контакты</a></li>
+                    {% if not user.is_authenticated %}
+                        <li><a href="{% url 'authapp:login' %}" class="active">Войти</a></li>
+                    {% else %}
+                        <li><a href="{% url 'authapp:logout' %}" class="active">Выйти</a></li>
+                    {% endif %}
 				</ul>
 				<a href="#" class="search"></a>
 			</div>
