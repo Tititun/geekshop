@@ -6,11 +6,13 @@
 	<title>{{ title|title }}</title>
 	<link rel="stylesheet" type="text/css" href="{% static "style.css" %}">
 	<link rel="stylesheet" href="{%  static '/fonts/font-awesome/css/font-awesome.css' %}">
+    {% block css %}
+    {% endblock %}
 </head>
 
 <body>
     <div class="container">
-		<div class="slider">
+
 			<div class="header clearfix">
 				<a href="{% url 'main' %}" class="logo"></a>
                 <div class="time">{% now "d.m.Y" %}</div>
@@ -21,50 +23,20 @@
                     {% if not user.is_authenticated %}
                         <li><a href="{% url 'authapp:login' %}" class="active">Войти</a></li>
                     {% else %}
+                        <li><a href="{% url 'authapp:profile' %}" class="active">{{ user.username }}</a></li>
                         <li><a href="{% url 'authapp:logout' %}" class="active">Выйти</a></li>
                     {% endif %}
 				</ul>
-				<a href="#" class="search"></a>
+                <a href="#" class="search"></a>
 			</div>
-			<div class="text-slider">
-				<h3 class="green">тенденции</h3>
-				<h3 class="big"> удобные стулья</h3>
-				<p>Новый уровень комфорта. Отличные характеристики.</p>
-				<a href="#" class="button-order">заказать <img src="{%  static 'img/arrow.png' %}" alt=""></a>
-			</div>
-			<div class="navi">
-				<a href="#"></a><a href="#"></a><a href="#"></a>
-			</div>
-	</div>
+
     {% block content %}
     {% endblock %}
 
-    <div class="footer">
-        <div class="clearfix">
-            <div class="text-footer">
-                <h3>контакты</h3>
-            </div>
-            <div class="text-footer">
-                <h3>полезная информация</h3>
-            </div>
-            <div class="text-footer clearfix">
-                <h3>Оставайтесь на связи</h3>
-                <p>Подписаться на новости и рассылки</p>
-                <form>
-                    <input type="email" name="email" placeholder="ваш email">
-                    <a href="#"><i class="fa fa-paper-plane fa-2x" aria-hidden="true"></i></a>
-                </form>
-            </div>
-        </div>
-        <p class="small">&copy; GB 2017</p>
-        <div class="social">
-            <a href="#" class="social1"></a>
-            <a href="#" class="social2"></a>
-            <a href="#" class="social3"></a>
-            <a href="#" class="social4"></a>
-        </div>
-        <p class="small">Положения &amp; Условия  /  Конфиденциальность &amp; Cookies</p>
-    </div>
+    {% block footer %}
+    {% endblock %}
+
+
     </div>
 </body>
 </html>
