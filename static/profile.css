@@ -1,0 +1,11 @@
+body {
+    padding-top: 56px;
+}
+
+label {
+    min-width: 200px;
+}
+
+.btn {
+    margin-left: 15%;
+}
