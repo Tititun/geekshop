@@ -83,11 +83,12 @@ html, body {
 .search {
 	display: block;
 	width: 23px;
-	height: 23px;	
+	height: 23px;
 	background-image: url(img/search.png);
 	position: absolute;
-	top: 63px;
-	left: 1176px;
+	top: 73px;
+	left: 1120px;
+	z-index: 100;
 }
 .basket {
 	display: block;
