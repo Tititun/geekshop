@@ -6,6 +6,7 @@ label {
     min-width: 200px;
 }
 
-.btn {
-    margin-left: 15%;
+input[type=submit].btn-block  {
+    margin-left: 25%;
+    width: 200px;
 }
