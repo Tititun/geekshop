@@ -1,0 +1,19 @@
+<div class="card_add_basket">
+{% for product in products %}
+
+    <div class="details-products">
+    <img src="{{ product.image.url }}">
+        <div class="description">
+            <h3 class="big-bold">{{ product.name }}</h3>
+            <h3 class="red">горячее предложение</h3>
+            <p class="price"> {{ product.price }} <span>руб</span></p>
+            <button class="red-button" value="{{ product.id }}">
+                заказать
+            </button>
+            <div class="description-text">
+                <p>{{ product.description }}</p>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
