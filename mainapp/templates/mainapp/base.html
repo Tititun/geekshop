@@ -24,6 +24,9 @@
                         <li><a href="{% url 'authapp:login' %}" class="active">Войти</a></li>
                     {% else %}
                         <li><a href="{% url 'authapp:profile' %}" class="active">{{ user.username }}</a></li>
+                        {% if user.is_superuser %}
+                        <li><a href="{% url 'admins:index' %}" class="active">Администрирование</a></li>
+                        {% endif %}
                         <li><a href="{% url 'authapp:logout' %}" class="active">Выйти</a></li>
                     {% endif %}
 				</ul>
