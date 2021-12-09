@@ -4,9 +4,9 @@
 <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid">
-                <h1 class="mt-4">Редактирование категории | {{ category_select.name }}</h1>
+                <h1 class="mt-4">Редактирование категории | {{ category.name }}</h1>
                 <div class="card-body">
-                    <form action="{% url 'admins:admin_categories_update' category_select.id %}" method="post">
+                    <form action="{% url 'admins:admin_categories_update' category.id %}" method="post">
                         {%  csrf_token %}
                         <div class="form-row">
                             <div class="col-lg-6">
@@ -30,7 +30,7 @@
                             </div>
                         </div>
                     </form>
-                    <form action="{% url 'admins:admin_categories_delete' category_select.id %}" method="post">
+                    <form action="{% url 'admins:admin_categories_delete' category.id %}" method="post">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-lg-12" style="margin-top: 33px;">
