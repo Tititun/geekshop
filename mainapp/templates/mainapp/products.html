@@ -1,6 +1,9 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
 
+{% block css %}
+    <link href="{% static 'bootstrap.min.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
 
@@ -9,15 +12,32 @@
     <div class="details">
         <div class="links clearfix">
             <ul class="links-menu">
-                <li><a href="#" class="active">все</a></li>
+                <li><a href="{% url 'mainapp:products' %}" class="active">все</a></li>
                 {% for category in categories %}
-                    <li><a href="#">{{ category.name }}</a></li>
+                    <li><a href="{% url 'mainapp:category' category.id %}">{{ category.name }}</a></li>
                 {% endfor %}
             </ul>
         </div>
 
         {% include 'mainapp/includes/card.html' %}
+        <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
 
+            <li class="page-item {% if not products.has_previous %} disabled {% endif %}">
+                <a class="page-link" href="{% if products.has_previous %} {% url 'mainapp:page' id_category=category_id page=products.previous_page_number %} {% endif %}" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
+
+            {% for page in products.paginator.page_range %}
+               <li class="page-item">
+                    <a class='page-link' href="{% url 'mainapp:page' id_category=category_id page=page %}">{{ page }}</a>
+               </li>
+            {% endfor %}
+
+            <li class="page-item {% if not products.has_next %} disabled {% endif %}">
+                <a class="page-link" href="{% if products.has_next %} {% url 'mainapp:page' id_category=category_id page=products.next_page_number %} {% endif %}">Next</a></li>
+
+        </ul>
+        </nav>
         <div class="related">
             <div class="title clearfix">
                 <h2>Похожие продукты</h2>
