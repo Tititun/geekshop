@@ -1,3 +1,6 @@
+import hashlib
+import random
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from authapp.models import User
@@ -29,6 +32,14 @@ class UserRegisterForm(UserCreationForm):
         self.fields['password2'].widget.attrs['placeholder'] = 'Повторите пароль'
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control py-4'
+
+    def save(self, commit=True):
+        user = super(UserRegisterForm, self).save()
+        user.is_active = False
+        salt = hashlib.sha1(str(random.random()).encode('utf8')).hexdigest()[:6]
+        user.activation_key = hashlib.sha1((user.email + salt).encode('utf8')).hexdigest()
+        user.save()
+        return user
 
     def clean_first_name(self):
         data = self.cleaned_data['first_name']

@@ -15,13 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from authapp.views import login, register, profile, logout
+from authapp.views import login, profile, logout, RegisterListView
 
 
 app_name='authapp'
 urlpatterns = [
     path('login/', login, name='login'),
-    path('register/', register, name='register'),
+    path('register/', RegisterListView.as_view(), name='register'),
     path('profile/', profile, name='profile'),
     path('logout/', logout, name='logout'),
+    path('verify/<str:email>/<str:activate_key>/', RegisterListView.verify, name='verify')
 ]
