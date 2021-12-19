@@ -1,16 +1,11 @@
-from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import auth, messages
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView
-
-from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm
-
-# Create your views here.
+from django.views.generic import FormView, UpdateView
+from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm, UserProfileEditForm
 from authapp.models import User
-from baskets.models import Basket
 from geekshop import settings
 from mainapp.mixin import BaseClassContextMixin
 
@@ -77,22 +72,36 @@ class RegisterListView(FormView, BaseClassContextMixin):
             return HttpResponseRedirect(reverse('main'))
 
 
-@login_required
-def profile(request):
-    if request.method == 'POST':
-        form = UserProfileForm(instance=request.user,
-                               data=request.POST,
-                               files=request.FILES)
-        if form.is_valid():
-            form.save()
-        else:
-            print(form.errors)
-    context = {
-        'title': 'Профиль',
-        'form': UserProfileForm(instance=request.user)
-    }
-    return render(request, 'authapp/profile.html', context)
+class ProfileFormView(UpdateView, BaseClassContextMixin):
+    template_name = 'authapp/profile.html'
+    form_class = UserProfileForm
+    success_url = reverse_lazy('authapp:profile')
+    title = 'Профиль'
 
+    def post(self, request, *args, **kwargs):
+        form = UserProfileForm(data=request.POST,
+                               files=request.FILES,
+                               instance=request.user)
+        profile_form = UserProfileEditForm(request.POST,
+                                           instance=request.user.userprofile)
+        if form.is_valid() and profile_form.is_valid():
+            form.save()
+        return redirect(self.success_url)
+
+
+    def form_valid(self, form):
+        messages.set_level(self.request, messages.SUCCESS)
+        messages.success(self.request, 'Вы успешно зарегистрировались')
+        super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_object(self, *args, **kwargs):
+        return get_object_or_404(User, pk=self.request.user.pk)
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileFormView, self).get_context_data(*kwargs)
+        context['profile'] = UserProfileEditForm(instance=self.request.user.userprofile)
+        return context
 
 def logout(request):
     auth.logout(request)

@@ -14,6 +14,8 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 import django.core.mail.backends.filebased
+import social_core.pipeline.social_auth
+import social_django.middleware
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -44,7 +46,8 @@ INSTALLED_APPS = [
     'mainapp',
     'authapp',
     'baskets',
-    'admins'
+    'admins',
+    'social_django'
 ]
 
 MIDDLEWARE = [
@@ -55,6 +58,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'geekshop.urls'
@@ -70,7 +75,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'mainapp.context_processors.basket'
+                'mainapp.context_processors.basket',
+
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -127,26 +135,52 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = (BASE_DIR / "static", )
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'authapp.User'
-
 LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_ERROR_URL = '/'
 
-DOMAIN_NAME = 'http://localhost:8000'
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 25
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')
-
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = 'tmp/emails/ '
+# DOMAIN_NAME = 'http://localhost:8000'
+# EMAIL_HOST = 'localhost'
+# EMAIL_PORT = 25
+# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+# EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')
+#
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH = 'tmp/emails/ '
 
 
 # EMAIL_HOST_USER, EMAIL_HOST_PASSWORD = None
 # python -m smtpd -n -c DebuggingServer localhost:25
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = '8030212'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'XNal1rUimNMeBV9ewPIw'
+SOCIAL_AUTH_VK_OAUTH2_API_VERSION = '5.131'
+SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.vk.VKOAuth2',
+)
+
+# id = 8030212
+# key = XNal1rUimNMeBV9ewPIw
+
+SOCIAL_AUTH_PIPELINE = (
+   'social_core.pipeline.social_auth.social_details',
+   'social_core.pipeline.social_auth.social_uid',
+   'social_core.pipeline.social_auth.auth_allowed',
+   'social_core.pipeline.social_auth.social_user',
+   'social_core.pipeline.user.create_user',
+   'authapp.pipelines.save_user_profile',
+   'social_core.pipeline.social_auth.associate_user',
+   'social_core.pipeline.social_auth.load_extra_data',
+   'social_core.pipeline.user.user_details',
+)
