@@ -15,7 +15,7 @@ def save_user_profile(backend, user, response, *args, **kwargs):
                         'method/users.get',
                          None,
                          urlencode({
-                             'fields': ','.join(['bdate', 'sex', 'about', 'personal', 'photo_100']),
+                             'fields': ','.join(['bdate', 'sex', 'about', 'personal', 'photo_200']),
                              'access_token': response['access_token'],
                              'v': '5.131'
                          }),
@@ -35,6 +35,13 @@ def save_user_profile(backend, user, response, *args, **kwargs):
 
     if data['personal']['langs']:
         user.userprofile.language = ', '.join(data['personal']['langs'])
+
+    if photo_link := data['photo_200']:
+        photo_response = requests.get(photo_link)
+        path_photo = f'users_image/{user.id}.jpg'
+        with open(f'media/{path_photo}', 'wb') as photo:
+            photo.write(photo_response.content)
+        user.image = path_photo
 
     bdate = datetime.strptime(data['bdate'], '%d.%m.%Y').date()
     age = timezone.now().year - bdate.year
