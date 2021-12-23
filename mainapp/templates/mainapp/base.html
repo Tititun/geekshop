@@ -6,6 +6,7 @@
 	<title>{{ title|title }}</title>
 	<link rel="stylesheet" type="text/css" href="{% static "style.css" %}">
 	<link rel="stylesheet" href="{%  static '/fonts/font-awesome/css/font-awesome.css' %}">
+    <link href="{% static 'bootstrap.min.css' %}" rel="stylesheet">
     {% block css %}
     {% endblock %}
 </head>
@@ -23,7 +24,26 @@
                     {% if not user.is_authenticated %}
                         <li><a href="{% url 'authapp:login' %}" class="active">Войти</a></li>
                     {% else %}
-                        <li><a href="{% url 'authapp:profile' %}" class="active">{{ user.username }}</a></li>
+                        <li class="nav-item">
+                            <div class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="" data-toggle="dropdown">
+                                    {{ user.username|default:'Пользователь' }}
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="nav-link text-dark" href="{% url 'authapp:profile' %}">
+                                            Профиль
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-dark" href="{% url 'ordersapp:list' %}">
+                                            Заказы
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
                         {% if user.is_superuser %}
                         <li><a href="{% url 'admins:index' %}" class="active">Администрирование</a></li>
                         {% endif %}
@@ -42,5 +62,6 @@
     </div>
 <script src="{%  static 'jquery.min.js' %}"></script>
 <script src="{%  static 'basket.js' %}"></script>
+<script src="{%  static 'bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
