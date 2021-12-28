@@ -18,7 +18,6 @@ def products(request, id_category=0, page=1):
         products = Product.objects.filter(category_id=id_category)
     else:
         products = Product.objects.all()
-    print(len(products))
     paginator = Paginator(products, per_page=1)
 
     try:
