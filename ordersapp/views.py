@@ -132,5 +132,4 @@ def product_quantity_update_save(sender, instance, **kwargs):
 @receiver(pre_delete, sender=OrderItem)
 def product_quantity_update_delete(sender, instance, **kwargs):
     instance.product.quantity += instance.quantity
-    instance.save()
-
+    instance.product.save()
