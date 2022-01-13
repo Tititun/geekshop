@@ -1,8 +1,31 @@
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render
-from  mainapp.models import Product, Product_Category
+from mainapp.models import Product, Product_Category
+from django.conf import settings
+from django.core.cache import cache
 
-# Create your views here.
+
+def get_link_product():
+    if settings.LOW_CACHE:
+        key = 'link_product'
+        link_product = cache.get(key)
+        if link_product is None:
+            link_category = Product.objects.all()
+            cache.set(key, link_product)
+        return link_product
+    else:
+        return Product.objects.all()
+
+def get_link_category():
+    if settings.LOW_CACHE:
+        key = 'link_category'
+        link_category = cache.get(key)
+        if link_category is None:
+            link_category = Product_Category.objects.all()
+            cache.set(key, link_category)
+        return link_category
+    else:
+        return Product_Category.objects.all()
 
 
 def index(request):
@@ -18,6 +41,8 @@ def products(request, id_category=0, page=1):
         products = Product.objects.filter(category_id=id_category).select_related('category')
     else:
         products = Product.objects.all().select_related('category')
+
+    products = get_link_product()
     paginator = Paginator(products, per_page=2)
 
     try:
@@ -30,7 +55,8 @@ def products(request, id_category=0, page=1):
     context = {
         'title': 'товары',
         'products': products_paginator,
-        'categories': Product_Category.objects.all(),
+        # 'categories': Product_Category.objects.all(),
+        'categories': get_link_category(),
         'category_id': id_category
     }
     return render(request, 'mainapp/products.html', context)
