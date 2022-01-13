@@ -38,11 +38,12 @@ def index(request):
 def products(request, id_category=0, page=1):
 
     if id_category:
-        products = Product.objects.filter(category_id=id_category).select_related('category')
+        # products = Product.objects.filter(category_id=id_category).select_related('category')
+        products = get_link_product()
     else:
         products = Product.objects.all().select_related('category')
 
-    products = get_link_product()
+
     paginator = Paginator(products, per_page=2)
 
     try:
