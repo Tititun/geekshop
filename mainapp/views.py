@@ -10,7 +10,7 @@ def get_link_product():
         key = 'link_product'
         link_product = cache.get(key)
         if link_product is None:
-            link_category = Product.objects.all()
+            link_product = Product.objects.all()
             cache.set(key, link_product)
         return link_product
     else:
