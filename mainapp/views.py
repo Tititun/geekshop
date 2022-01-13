@@ -5,35 +5,32 @@ from django.views.decorators.cache import cache_page, never_cache
 from mainapp.models import Product, Product_Category
 from django.conf import settings
 from django.core.cache import cache
+from django.db.models import Q
 
 
-def get_link_product(pk='all'):
+def get_link_product(pk=False):
+    filter = Q(category_id=pk) if pk else Q()
     if settings.LOW_CACHE:
         key = f'link_product_{pk}'
         link_product = cache.get(key)
         if link_product is None:
-            if pk == 'all':
-                link_product = Product.objects.all()
-            else:
-                link_product = Product.objects.filter(pk=pk)
+            link_product = Product.objects.filter(filter)
             cache.set(key, link_product)
         return link_product
     else:
-        return Product.objects.all()
+        return Product.objects.filter(filter)
 
-def get_link_category(pk='all'):
+def get_link_category(pk=False):
+    filter = Q(pk=pk) if pk else Q()
     if settings.LOW_CACHE:
         key = f'link_category_{pk}'
         link_category = cache.get(key)
         if link_category is None:
-            if pk == 'all':
-                link_category = Product_Category.objects.all()
-            else:
-                link_category = Product_Category.objects.filter(pk=pk)
+            link_category = Product_Category.objects.filter(filter)
             cache.set(key, link_category)
         return link_category
     else:
-        return Product_Category.objects.all()
+        return Product_Category.objects.filter(filter)
 
 
 def index(request):
@@ -50,7 +47,7 @@ def products(request, id_category=0, page=1):
         # products = Product.objects.filter(category_id=id_category).select_related('category')
         products = get_link_product(pk=id_category)
     else:
-        products = get_link_product(pk=id_category)
+        products = get_link_product()
         # products = Product.objects.all().select_related('category')
 
     paginator = Paginator(products, per_page=3)
