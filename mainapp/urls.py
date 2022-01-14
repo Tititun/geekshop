@@ -15,12 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-# from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page
 from mainapp.views import products
 
 app_name='products'
 urlpatterns = [
     path('', products, name='products'),
+    # path('<int:id_category>/<int:page>', cache_page(600)(products), name='page'),
     path('<int:id_category>/<int:page>', products, name='page'),
     path('category/<int:id_category>', products, name='category'),
 ]

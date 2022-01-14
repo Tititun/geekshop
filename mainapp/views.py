@@ -41,8 +41,6 @@ def index(request):
     }
     return render(request, 'mainapp/index.html', context)
 
-@cache_page(3600)
-# @never_cache
 def products(request, id_category=0, page=1):
 
     if id_category:
