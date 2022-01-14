@@ -70,7 +70,7 @@ window.onload = function () {
         delta_quantity = -quantity_arr[orderitem_num];
         orderSummaryUpdate(price_arr[orderitem_num], delta_quantity);
     }
-    console.log('here')
+
     $('.basket_list').on('click', 'input[type="number"]', function (e) {
         let t_href = e.target;
         $.ajax(
