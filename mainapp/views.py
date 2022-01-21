@@ -1,10 +1,9 @@
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render
-from django.views.decorators.cache import cache_page, never_cache
 from mainapp.models import Product, Product_Category
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Q
+from django.db.models import Q, Count
 
 
 def get_link_product(pk=False):
@@ -32,7 +31,8 @@ def get_link_category(pk=False):
             cache.set(key, link_category)
         return link_category
     else:
-        return Product_Category.objects.filter(filter)
+        return Product_Category.objects.filter(filter)\
+            .annotate(total=Count('product')).exclude(total=0)
 
 
 def index(request):

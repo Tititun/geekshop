@@ -23,6 +23,8 @@ def login(request):
         else:
             print(form.errors)
     else:
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('main'))
         form = UserLoginForm()
     context = {
         'title': 'Авторизация',
