@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import user_passes_test
+from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -8,6 +9,7 @@ from mainapp.mixin import BaseClassContextMixin
 from admins.forms import UserAdminRegisterForm, UserAdminProfileForm, CategoryForm, ProductForm
 from authapp.models import User
 from mainapp.models import Product_Category, Product
+from django.db import connection
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -92,6 +94,10 @@ class CategoryCreateView(CreateView, BaseClassContextMixin):
     def dispatch(self, request, *args, **kwargs):
         return super(CategoryCreateView, self).dispatch(request, *args, **kwargs)
 
+def db_profile_by_type(prefix, type, queries):
+   update_queries = list(filter(lambda x: type in x['sql'], queries))
+   print(f'db_profile {type} for {prefix}:')
+   [print(query['sql']) for query in update_queries]
 
 class CategoryUpdateView(UpdateView, BaseClassContextMixin):
     model = Product_Category
@@ -100,6 +106,15 @@ class CategoryUpdateView(UpdateView, BaseClassContextMixin):
     success_url = reverse_lazy('admins:admin_categories')
     title = 'Обновление данных категории'
     context_object_name = 'category'
+
+    def form_valid(self, form):
+        if 'discount' in form.cleaned_data:
+            discount = form.cleaned_data['discount']
+            if discount:
+                self.object.product_set.update(
+                    price=F('price') * (1 - discount / 100))
+                db_profile_by_type(self.__class__, 'UPDATE', connection.queries)
+        return super().form_valid(form)
 
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def dispatch(self, request, *args, **kwargs):
@@ -112,6 +127,12 @@ class CategoryDeleteView(DeleteView, BaseClassContextMixin):
     success_url = reverse_lazy('admins:admin_categories')
     title = 'Удалить категорию'
     context_object_name = 'category'
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        Product.objects.filter(category=self.object).delete()
+        self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
 
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def dispatch(self, request, *args, **kwargs):

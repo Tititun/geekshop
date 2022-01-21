@@ -46,7 +46,7 @@ class OrderCreate(CreateView, BaseClassContextMixin):
                     form.initial['product'] = basket_item[num].product
                     form.initial['quantity'] = basket_item[num].quantity
                     form.initial['price'] = basket_item[num].product.price
-                # basket_item.delete()
+                basket_item.delete()
             else:
                 formset = OrderFormSet()
         context['orderitems'] = formset
@@ -123,7 +123,7 @@ def order_forming_complete(request, pk):
 def product_quantity_update_save(sender, instance, **kwargs):
     if instance.pk:
         get_item = instance.get_item(int(instance.pk))
-        instance.product.quantity -= instance.quantity - get_item
+        instance.product.quantity -= instance.quantity
     else:
         instance.product.quantity -= instance.quantity
     instance.product.save()
